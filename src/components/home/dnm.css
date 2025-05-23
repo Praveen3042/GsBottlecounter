@@ -1,7 +1,15 @@
 .MainCon{
     background-color: rgb(3, 78, 31);
-    padding: 100px;
-    height: 100vh;
+    padding: 50px;
+    height: auto;
+    /* margin-top: 50px; */
+}
+
+.MainCon1{
+    background-color: rgb(3, 78, 31);
+    padding: 50px;
+    height: auto;
+    margin-top: 50px;
 }
 
 .Mtable{

@@ -124,7 +124,7 @@ export const Iot = () => {
 
   
     return (
-        <div className='MainCon' >
+        <div className='MainCon1' >
             <h3>Bottle_counter</h3>
 
             {/* <button onClick={exportToCSV} style={{ marginBottom: "1rem", padding: "10px", background: "#28a745", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}>
