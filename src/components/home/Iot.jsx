@@ -20,7 +20,7 @@ export const Iot = () => {
             starting_reg_addr: 542,
         },
         {
-            data: "1",
+            data: "0",
             data_type: 0,
             request_type: 5,
             starting_reg_addr: 543,

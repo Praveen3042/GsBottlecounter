@@ -7,7 +7,7 @@
 
 .MainCon1{
     background-color: rgb(3, 78, 31);
-    padding: 50px;
+    padding: 25px;
     height: auto;
     margin-top: 50px;
 }
@@ -22,7 +22,18 @@
     border: 1px solid rgb(0, 0, 0);
     text-align: center;
 }
+
+ .Mtable1 tr,.Mtable1 td,.Mtable1 th{
+    padding: 10px;
+    border: 1px solid rgb(0, 0, 0);
+    text-align: center;
+}
 .Mtable th{
+    background-color: rgb(15, 2, 48);
+    color: #fff;
+}
+
+.Mtable1 th{
     background-color: rgb(15, 2, 48);
     color: #fff;
 }
@@ -44,8 +55,11 @@
     border: 1px solid #ddd; /* Border for structure */
     border-radius: 8px; /* Rounded corners */
     margin-bottom: 20px;
+    margin-left: 5px;
 }
-
+h3{
+    color: #fff;
+}
 .write-item {
     display: flex;
     align-items: center; /* Vertically center label and dropdown */
@@ -74,11 +88,11 @@
 
     .MainCon{
         background-color: rgb(3, 78, 31);
-        padding: 30px;
-        height: 90vh;
+        padding: 10px;
+        height: auto;
     }
 
-    .Mtable{
+    .Mtable {
         width: 100%;
         border-collapse: collapse;
         color: #080808;
@@ -87,6 +101,12 @@
     .Mtable tr,.Mtable td,.Mtable th{
         font-size: 15px;
         padding: 7px;
+        border: 1px solid rgb(0, 0, 0);
+        text-align: center;
+    }
+    .Mtable1 tr,.Mtable1 td,.Mtable1 th{
+        font-size: 10px;
+        padding: 4px;
         border: 1px solid rgb(0, 0, 0);
         text-align: center;
     }

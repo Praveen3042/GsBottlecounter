@@ -4,19 +4,22 @@ import { getDatabase, ref, onValue, set } from 'firebase/database';
 import "./dnm.css"
 import { app } from "../../firebase/firebase";
 
+
+
 const database = getDatabase(app);
 console.log(database)
-
-export const GSBottle_counter = () => {
- const [machineKeys, setMachineKeys] = useState([]);
+export const Iotchiller = () => {
+  const [machineKeys, setMachineKeys] = useState([]);
   const [allMachineData, setAllMachineData] = useState({});
   const fieldNames = ["Counter Reset", "Pulse", "Stop PLC"];
 
+  
+
   // Default write list structure
   const defaultWriteList = [
-    { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 542 },
-    { data: "1", data_type: 0, request_type: 5, starting_reg_addr: 543 },
-    { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 548 },
+    { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 519 },
+    { data: "1", data_type: 0, request_type: 5, starting_reg_addr: 520 },
+    { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 527 },
   ];
 
   // Fetch all machine keys
@@ -25,14 +28,14 @@ export const GSBottle_counter = () => {
     onValue(rootRef, (snapshot) => {
       const rootData = snapshot.val();
       if (rootData) {
-        const keys = Object.keys(rootData).filter((key) => key.startsWith("Machine"));
+        const keys = Object.keys(rootData).filter((key) => key.startsWith("SAFC_M"));
         setMachineKeys(keys);
       }
     });
   }, []);
 
   // Fetch read data for all machines
- useEffect(() => {
+  useEffect(() => {
   machineKeys.forEach((machine) => {
     // READ data
     const readRef = ref(database, `/${machine}/read`);
@@ -43,6 +46,12 @@ export const GSBottle_counter = () => {
             ts,
             bottle_count: values?.bottle_count,
             plc_status: values?.plc_status,
+            chiller: values?.chiller != null ? (Number(values.chiller) / 10).toFixed(1) : null,
+            pump : values?.pump,
+            fan: values?.fan,
+            comp : values?.comp,
+            fsw_trip: values?.fsw_trip,
+            kp1_trip: values?.kp1_trip,
           }))
         : [];
 
@@ -109,7 +118,7 @@ export const GSBottle_counter = () => {
 
   return (
     <div className="MainCon">
-      <h3>All Machine Data</h3>
+      <h3>Machine With Chiller</h3>
 
       {machineKeys.length === 0 ? (
         <p>Loading machines...</p>
@@ -126,20 +135,31 @@ export const GSBottle_counter = () => {
               {records.length === 0 ? (
                 <p>No records</p>
               ) : (
-                <table className="Mtable">
+                <table className="Mtable1">
                   <thead>
                     <tr>
-                      {/* <th>S.No.</th> */}
                       <th>Bottle Count</th>
                       <th>PLC Status</th>
+                      <th>water</th>
+                      <th>Pump</th>
+                      <th>Compressor</th>
+                      <th>Fan</th>
+                      <th>FSW_Trip</th>
+                      <th>KP1_Trip</th>
                     </tr>
                   </thead>
                   <tbody>
                     {[...records].reverse().slice(0,1).map((r, i) => (
                       <tr key={i}>
-                        {/* <td>{i + 1}</td> */}
+                      
                         <td>{r.bottle_count}</td>
                         <td>{r.plc_status === 1 ? "OFF" : "ON"}</td>
+                        <td>{r.chiller}</td>
+                        <td>{r.pump === 1 ? "on" : "off"}</td>
+                        <td>{r.comp === 1 ? "on" : "off"}</td>
+                        <td>{r.fan === 1 ? "on" : "off"}</td>
+                        <td>{r.fsw_trip=== 1 ? "ok" : "trip"}</td>
+                        <td>{r.kp1_trip=== 1 ? "ok" : "trip"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -147,7 +167,7 @@ export const GSBottle_counter = () => {
               )}
 
               {writeList.map((item, i) => (
-                <div key={i} className="write-item">
+                <div key={i}  className="write-item">
                   <strong>{fieldNames[i] || `Control ${i + 1}`}:</strong>{" "}
                   <select
                     value={item.data}
@@ -175,9 +195,12 @@ export const GSBottle_counter = () => {
                 Write to {machine}
               </button>
             </div>
+
           );
         })
       )}
+
+      
     </div>
   );
 };
