@@ -1,5 +1,6 @@
 import { auth } from "./firebase";
 import {
+
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -7,7 +8,15 @@ import {
   updatePassword,
   signInWithPopup,
   GoogleAuthProvider,
+  setPersistence,
+  browserSessionPersistence
 } from "firebase/auth";
+
+
+// Set session-only persistence (user will be logged out on tab close)
+setPersistence(auth, browserSessionPersistence).catch((error) => {
+    console.error('Failed to set session persistence:', error);
+});
 
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
   return createUserWithEmailAndPassword(auth, email, password);
