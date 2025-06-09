@@ -18,9 +18,9 @@ const Header = () => {
                 userLoggedIn ? (
                     <>
                         {/* Navigation links visible only after login */}
-                        <Link className='text-sm text-blue-600 underline' to='/dashboard'>Dashboard</Link>
+                        {/* <Link className='text-sm text-blue-600 underline' to='/dashboard'>Dashboard</Link>
                         <Link className='text-sm text-blue-600 underline' to='/profile'>Profile</Link>
-                        <Link className='text-sm text-blue-600 underline' to='/settings'>Settings</Link>
+                        <Link className='text-sm text-blue-600 underline' to='/settings'>Settings</Link> */}
 
                         {/* Logout Button */}
                         <button
