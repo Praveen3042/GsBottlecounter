@@ -20,7 +20,7 @@ export const Iot = () => {
             starting_reg_addr: 542,
         },
         {
-            data: "0",
+            data: "1",
             data_type: 0,
             request_type: 5,
             starting_reg_addr: 543,
@@ -31,6 +31,13 @@ export const Iot = () => {
             request_type: 5,
             starting_reg_addr: 548,
         },
+        {
+            data: "2",
+            data_type: 7,
+            request_type: 16,
+            starting_reg_addr: 1576
+        },
+
     ]);
 
 
@@ -122,7 +129,7 @@ export const Iot = () => {
 
     const fieldNames = ["Counter Reset", "Pulse", "stop_plc"];
 
-  
+
     return (
         <div className='MainCon1' >
             <h3>Bottle_counter</h3>
@@ -131,24 +138,24 @@ export const Iot = () => {
         Export to CSV
       </button> */}
 
-           
+
             <div>
 
 
 
 
                 <div className="writ1">
-                        {/* reading part */}
+                    {/* reading part */}
 
                     {records.length === 0 ? (
                         <p>No records found</p>
                     ) : (
                         <table className='Mtable'>
                             <thead>
-                                <tr> 
-                                    <th>Bottle Count</th>    
+                                <tr>
+                                    <th>Bottle Count</th>
                                     <th>PLC Status</th>
-                                    
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -156,7 +163,7 @@ export const Iot = () => {
                                     <tr key={index}>
                                         <td>{record.bottle_count}</td>
                                         <td>{record.plc_status === 1 ? "OFF" : "ON"}</td>
-                                       
+
                                     </tr>
                                 ))}
                             </tbody>
@@ -166,11 +173,11 @@ export const Iot = () => {
 
                     )
                     }
-                    
 
-                     {/* write part */}
 
-                    {writeList.map((item, index) => (
+                    {/* write part */}
+
+                    {writeList.slice(0, 3).map((item, index) => (
                         <div key={index} className="write-item">
                             <div>
                                 <strong>{fieldNames[index] || `Control ${index + 1}`}:</strong>{" "}

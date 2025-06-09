@@ -17,6 +17,12 @@ export const GSBottle_counter = () => {
     { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 542 },
     { data: "1", data_type: 0, request_type: 5, starting_reg_addr: 543 },
     { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 548 },
+    {
+            data: "2",
+            data_type: 7,
+            request_type: 16,
+            starting_reg_addr: 1576
+        },
   ];
 
   // Fetch all machine keys
@@ -146,7 +152,7 @@ export const GSBottle_counter = () => {
                 </table>
               )}
 
-              {writeList.map((item, i) => (
+              {writeList.slice(0, 3).map((item, i) => (
                 <div key={i} className="write-item">
                   <strong>{fieldNames[i] || `Control ${i + 1}`}:</strong>{" "}
                   <select
