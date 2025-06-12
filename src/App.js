@@ -1,13 +1,19 @@
 import Login from "./components/auth/login";
 import Register from "./components/auth/register";
-
+import { useRoutes, Navigate, useLocation } from "react-router-dom";
 import Header from "./components/header";
 import Home from "./components/home";
 
-import { AuthProvider } from "./contexts/authContext";
-import { useRoutes } from "react-router-dom";
+import { AuthProvider ,useAuth} from "./contexts/authContext";
+// import { useRoutes } from "react-router-dom";
+
+const PrivateRoute = ({ children }) => {
+  const { userLoggedIn } = useAuth();
+  return userLoggedIn ? children : <Navigate to="/login" replace />;
+};
 
 function App() {
+   
   const routesArray = [
     {
       path: "*",
@@ -23,7 +29,9 @@ function App() {
     },
     {
       path: "/home",
-      element: <Home />,
+      element: <PrivateRoute>
+          <Home />
+        </PrivateRoute>,
     },
   ];
   let routesElement = useRoutes(routesArray);

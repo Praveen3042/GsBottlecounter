@@ -10,7 +10,7 @@ console.log(database)
 export const GSBottle_counter = () => {
  const [machineKeys, setMachineKeys] = useState([]);
   const [allMachineData, setAllMachineData] = useState({});
-  const fieldNames = ["Counter Reset", "Pulse", "Stop PLC"];
+  const fieldNames = ["Counter Reset", "Pulse", "Stop PLC","m1"];
 
   // Default write list structure
   const defaultWriteList = [
@@ -152,7 +152,7 @@ export const GSBottle_counter = () => {
                 </table>
               )}
 
-              {writeList.slice(0, 3).map((item, i) => (
+              {writeList.map((item, i) => (
                 <div key={i} className="write-item">
                   <strong>{fieldNames[i] || `Control ${i + 1}`}:</strong>{" "}
                   <select
