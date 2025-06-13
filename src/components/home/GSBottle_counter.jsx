@@ -152,7 +152,7 @@ export const GSBottle_counter = () => {
                 </table>
               )}
 
-              {writeList.map((item, i) => (
+              {writeList.slice(0,3).map((item, i) => (
                 <div key={i} className="write-item">
                   <strong>{fieldNames[i] || `Control ${i + 1}`}:</strong>{" "}
                   <select
