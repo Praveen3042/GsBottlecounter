@@ -7,15 +7,15 @@ import { app } from "../../firebase/firebase";
 
 
 const database = getDatabase(app);
-console.log(database)
-export const Iotchiller = () => {
+
+export const Iot_chiller = () => {
   const [machineKeys, setMachineKeys] = useState([]);
   const [allMachineData, setAllMachineData] = useState({});
   const fieldNames = ["Counter Reset", "Pulse", "Stop PLC"];
 
   
 
-  // Default write list structure
+ // Default write list structure
   const defaultWriteList = [
     { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 519 },
     { data: "1", data_type: 0, request_type: 5, starting_reg_addr: 520 },
@@ -36,50 +36,75 @@ export const Iotchiller = () => {
 
   // Fetch read data for all machines
   useEffect(() => {
-  machineKeys.forEach((machine) => {
-    // READ data
-    const readRef = ref(database, `/${machine}/read`);
-    onValue(readRef, (snapshot) => {
-      const raw = snapshot.val();
-      const records = raw
-        ? Object.values(raw).map(({ ts, values }) => ({
-            ts,
-            bottle_count: values?.bottle_count,
-            plc_status: values?.plc_status,
-            chiller: values?.chiller != null ? (Number(values.chiller) / 10).toFixed(1) : null,
-            pump : values?.pump,
-            fan: values?.fan,
-            comp : values?.comp,
-            fsw_trip: values?.fsw_trip,
-            kp1_trip: values?.kp1_trip,
-          }))
-        : [];
+    machineKeys.forEach((machine) => {
+      // READ data
+      const readRef = ref(database, `/${machine}/read`);
+      onValue(readRef, (snapshot) => {
+        const raw = snapshot.val();
+        // console.log(`Raw data from ${machine} read:`, raw);
 
-      setAllMachineData((prev) => ({
-        ...prev,
-        [machine]: {
-          ...(prev[machine] || {}),
-          records,
-        },
-      }));
+        if (!raw) {
+          console.error(`No data found for machine ${machine} at /${machine}/read`);
+          return;
+        }
+
+        // Extract device key and data
+        const deviceKey = Object.keys(raw || {})[0];
+        console.log(`Device key for machine ${machine}:`, deviceKey);
+
+        if (!deviceKey) {
+          console.error(`No device key found in data for machine ${machine}`);
+          return;
+        }
+
+        const deviceData = raw[deviceKey];
+        console.log(`Device data for machine ${machine}:`, deviceData);
+
+        if (!Array.isArray(deviceData)) {
+          console.warn(`Device data for ${machine} is not an array. Found:`, deviceData);
+          return;
+        }
+
+        // Map the array to extract relevant fields
+        const records = deviceData.map(({ ts, values }) => ({
+          ts,
+          bottle_count: values?.bottle_count,
+          plc_status: values?.plc_status,
+          chiller: values?.chiller != null ? (Number(values.chiller) / 10).toFixed(1) : null,
+          pump: values?.pump,
+          fan: values?.fan,
+          comp: values?.comp,
+          fsw_trip: values?.fsw_trip,
+          kp1_trip: values?.kp1_trip,
+        }));
+
+        // Update state with records
+        setAllMachineData((prev) => ({
+          ...prev,
+          [machine]: {
+            ...(prev[machine] || {}),
+            records,
+          },
+        }));
+      });
+
+      // WRITE data
+      const writeRef = ref(database, `/${machine}/write`);
+      onValue(writeRef, (snapshot) => {
+        const writeData = snapshot.val();
+        console.log(`Write data for machine ${machine}:`, writeData);
+
+        const writeList = writeData?.params?.write_list || [];
+        setAllMachineData((prev) => ({
+          ...prev,
+          [machine]: {
+            ...(prev[machine] || {}),
+            writeList,
+          },
+        }));
+      });
     });
-
-    // WRITE data
-    const writeRef = ref(database, `/${machine}/write`);
-    onValue(writeRef, (snapshot) => {
-      const writeData = snapshot.val();
-      const writeList = writeData?.params?.write_list;
-
-      setAllMachineData((prev) => ({
-        ...prev,
-        [machine]: {
-          ...(prev[machine] || {}),
-          writeList: writeList || defaultWriteList,
-        },
-      }));
-    });
-  });
-}, [machineKeys]);
+  }, [machineKeys]);
 
 
   // Handle write change
@@ -118,7 +143,7 @@ export const Iotchiller = () => {
 
   return (
     <div className="MainCon">
-      <h3>Machine With Chiller</h3>
+      <h2>Machine With Chiller</h2>
 
       {machineKeys.length === 0 ? (
         <p>Loading machines...</p>
@@ -130,12 +155,12 @@ export const Iotchiller = () => {
 
           return (
             <div key={machine} className='writ1'>
-              <h2>{machine}</h2>
+              <h3>{machine}</h3>
 
               {records.length === 0 ? (
                 <p>No records</p>
               ) : (
-                <table className="Mtable1">
+                <table className="Mtable">
                   <thead>
                     <tr>
                       <th>Bottle Count</th>
@@ -149,9 +174,9 @@ export const Iotchiller = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...records].reverse().slice(0,1).map((r, i) => (
+                    {[...records].reverse().slice(0, 1).map((r, i) => (
                       <tr key={i}>
-                      
+
                         <td>{r.bottle_count}</td>
                         <td>{r.plc_status === 1 ? "OFF" : "ON"}</td>
                         <td>{r.chiller}</td>
@@ -160,6 +185,7 @@ export const Iotchiller = () => {
                         <td>{r.fan === 1 ? "on" : "off"}</td>
                         <td>{r.fsw_trip=== 1 ? "ok" : "trip"}</td>
                         <td>{r.kp1_trip=== 1 ? "ok" : "trip"}</td>
+
                       </tr>
                     ))}
                   </tbody>
@@ -167,7 +193,7 @@ export const Iotchiller = () => {
               )}
 
               {writeList.map((item, i) => (
-                <div key={i}  className="write-item">
+                <div key={i}>
                   <strong>{fieldNames[i] || `Control ${i + 1}`}:</strong>{" "}
                   <select
                     value={item.data}
@@ -200,7 +226,7 @@ export const Iotchiller = () => {
         })
       )}
 
-      
+    
     </div>
   );
 };

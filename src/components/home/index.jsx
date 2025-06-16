@@ -3,6 +3,8 @@ import { useAuth } from '../../contexts/authContext'
 import { Iot } from './Iot.jsx'
 import { GSBottle_counter } from './GSBottle_counter.jsx'
 import { Iotchiller } from './Iotchiller.jsx'
+import {Iot_chiller} from './Iot_chiller.jsx'
+
 
 const Home = () => {
     const { currentUser } = useAuth()
@@ -13,6 +15,9 @@ const Home = () => {
             <Iot/>
             <GSBottle_counter/>
             <Iotchiller/>
+            {/* <Iot_chiller/> */}
+            
+         
             
         </div>
     )
