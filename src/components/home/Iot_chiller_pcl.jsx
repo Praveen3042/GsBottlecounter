@@ -14,7 +14,7 @@ export const Iot_chiller_pcl = () => {
  
    
  
-  // Default write list structure
+  // // Default write list structure
    const defaultWriteList = [
      { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 542 },
      { data: "1", data_type: 0, request_type: 5, starting_reg_addr: 543 },
@@ -125,29 +125,26 @@ export const Iot_chiller_pcl = () => {
    };
  
    // Handle writing data to each machine
-  const handleWrite = async (machine) => {
-  const writeList = allMachineData[machine]?.writeList || [];
 
-  const deviceNames = ["plc_device", "plc_device2"]; // First then second
-  const writeRef = ref(database, `/plc_device/write`); // Same path used twice
+const handleWrite = async (machine, writeList) => {
+  const deviceNames = ["plc_device", "plc_device2"];
+  const writeRef = ref(database, `/${machine}/write`);
 
-  // Step 1: Write first device
   const payload1 = {
     method: "do_mb_write",
     params: {
       device_name: deviceNames[0],
-      write_list: writeList,
+      write_list: writeList, // ✅ Now using real-time values
     },
   };
 
   try {
     await set(writeRef, payload1);
-    console.log(`✅ First write: ${deviceNames[0]}`, payload1);
+    console.log(`✅ First write to ${deviceNames[0]}`, payload1);
   } catch (err) {
     console.error(`❌ Error writing to ${deviceNames[0]}`, err);
   }
 
-  // Step 2: After 5 seconds, update same path with second device
   setTimeout(async () => {
     const payload2 = {
       method: "do_mb_write",
@@ -158,14 +155,18 @@ export const Iot_chiller_pcl = () => {
     };
 
     try {
-      await set(writeRef, payload2); // Updates same path
-      console.log(`✅ Second write: ${deviceNames[1]}`, payload2);
+      await set(writeRef, payload2);
+      console.log(`✅ Second write to ${deviceNames[1]}`, payload2);
     } catch (err) {
       console.error(`❌ Error writing to ${deviceNames[1]}`, err);
     }
-  }, 5000); // 5 seconds delay
+  }, 5000);
 };
+
  
+
+
+
    return (
      <div className="MainCon">
        <h3>Machine With Chiller(60L)</h3>
@@ -199,15 +200,13 @@ export const Iot_chiller_pcl = () => {
  
                          <td>{r.bottle_count}</td>
                          <td>{r.plc_status === 1 ? "OFF" : "ON"}</td>
-                         
-                        
                        </tr>
                      ))}
                    </tbody>
                  </table>
                )}
  
-               {writeList.map((item, i) => (
+               { writeList.map((item, i) => (
                  <div key={i} className='write-item'>
                    <strong>{fieldNames[i] || `Control ${i + 1}`}:</strong>{" "}
                    <select
@@ -221,7 +220,7 @@ export const Iot_chiller_pcl = () => {
                ))}
  
                <button
-                 onClick={() => handleWrite(machine)}
+                onClick={() => handleWrite(machine, writeList)}
                  style={{
                    marginTop: "10px",
                    marginBottom: "30px",

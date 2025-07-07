@@ -191,7 +191,7 @@ export const Iotchiller = () => {
               ))}
 
               <button
-                onClick={() => handleWrite(machine)}
+                 onClick={() => handleWrite(machine, writeList)}
                 style={{
                   marginTop: "10px",
                   marginBottom: "30px",
