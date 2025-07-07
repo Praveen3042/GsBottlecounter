@@ -112,7 +112,7 @@ h3{
     }
 
     .writ1 {
-        width: 95%;
+        width: 98%;
         display: flex;
         flex-wrap: wrap; /* Allow items to wrap to the next line */
         gap: 16px; /* Space between items */

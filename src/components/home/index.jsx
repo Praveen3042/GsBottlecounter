@@ -16,7 +16,7 @@ const Home = () => {
             <Iot/>    {/* firat m */}
             <GSBottle_counter/>  {/* 2nd m2 resd */}
             <Iotchiller/>  {/* firat m */}
-            {/* <Iot_chiller/> */}
+            <Iot_chiller/>
             <Iot_chiller_pcl/> 
             
          

@@ -13,7 +13,7 @@ const database = getDatabase(app);
 export const Iot_chiller = () => {
   const [machineKeys, setMachineKeys] = useState([]);
   const [allMachineData, setAllMachineData] = useState({});
-  const fieldNames = ["Counter Reset", "Pulse", "Stop PLC"];
+  const fieldNames = ["Counter Reset", "Pulse", "Stop PLC","counter reset 2"];
 
   
 
@@ -22,6 +22,7 @@ export const Iot_chiller = () => {
     { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 519 },
     { data: "1", data_type: 0, request_type: 5, starting_reg_addr: 520 },
     { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 525 },
+    { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 539 },
   ];
 
   // Fetch all machine keys
@@ -79,6 +80,7 @@ useEffect(() => {
         const records = deviceData.map(({ ts, values }) => ({
           ts,
           bottle_count: values?.bottle_count,
+          bottle_count_2: values?.bottle_count_2,
           plc_status: values?.plc_status,
           chiller: values?.chiller != null ? (Number(values.chiller) / 10).toFixed(1) : null,
           pump: values?.pump,
@@ -153,7 +155,7 @@ useEffect(() => {
 
   return (
     <div className="MainCon">
-      {/* <h2>Machine With Chiller</h2> */}
+      <h3>Machine With Chiller(300L)</h3>
 
       {machineKeys.length === 0 ? (
         <p>Loading machines...</p>
@@ -165,15 +167,16 @@ useEffect(() => {
 
           return (
             <div key={machine} className='writ1'>
-              <h3>{machine}</h3>
+              <h2>{machine}</h2>
 
               {records.length === 0 ? (
                 <p>No records</p>
               ) : (
-                <table className="Mtable">
+                <table className="Mtable1">
                   <thead>
                     <tr>
                       <th>Bottle Count</th>
+                       <th>Bottle Count 2</th>
                       <th>PLC Status</th>
                       <th>water</th>
                       <th>Pump</th>
@@ -188,6 +191,7 @@ useEffect(() => {
                       <tr key={i}>
 
                         <td>{r.bottle_count}</td>
+                        <td>{r.bottle_count_2}</td>
                         <td>{r.plc_status === 1 ? "OFF" : "ON"}</td>
                         <td>{r.chiller}</td>
                         <td>{r.pump === 1 ? "on" : "off"}</td>
@@ -203,7 +207,7 @@ useEffect(() => {
               )}
 
               {writeList.map((item, i) => (
-                <div key={i}>
+                <div key={i}className="write-item">
                   <strong>{fieldNames[i] || `Control ${i + 1}`}:</strong>{" "}
                   <select
                     value={item.data}
