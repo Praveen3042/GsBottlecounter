@@ -77,12 +77,6 @@ export const Iot_chiller_pcl = () => {
            ts,
            bottle_count: values?.bottle_count,
            plc_status: values?.plc_status,
-        //    chiller: values?.chiller != null ? (Number(values.chiller) / 10).toFixed(1) : null,
-        //    pump: values?.pump,
-        //    fan: values?.fan,
-        //    comp: values?.comp,
-        //    fsw_trip: values?.fsw_trip,
-        //    kp1_trip: values?.kp1_trip,
          }));
  
          // Update state with records
@@ -131,26 +125,50 @@ export const Iot_chiller_pcl = () => {
    };
  
    // Handle writing data to each machine
-   const handleWrite = async (machine) => {
-     const payload = {
-       method: "do_mb_write",
-       params: {
-         device_name: "plc_device",
-         write_list: allMachineData[machine].writeList,
-       },
-     };
-     const writeRef = ref(database, `/${machine}/write`);
-     try {
-       await set(writeRef, payload);
-       console.log(`Write to ${machine}:`, payload);
-     } catch (err) {
-       console.error(`Write error for ${machine}:`, err);
-     }
-   };
+  const handleWrite = async (machine) => {
+  const writeList = allMachineData[machine]?.writeList || [];
+
+  const deviceNames = ["plc_device", "plc_device2"]; // First then second
+  const writeRef = ref(database, `/plc_device/write`); // Same path used twice
+
+  // Step 1: Write first device
+  const payload1 = {
+    method: "do_mb_write",
+    params: {
+      device_name: deviceNames[0],
+      write_list: writeList,
+    },
+  };
+
+  try {
+    await set(writeRef, payload1);
+    console.log(`✅ First write: ${deviceNames[0]}`, payload1);
+  } catch (err) {
+    console.error(`❌ Error writing to ${deviceNames[0]}`, err);
+  }
+
+  // Step 2: After 5 seconds, update same path with second device
+  setTimeout(async () => {
+    const payload2 = {
+      method: "do_mb_write",
+      params: {
+        device_name: deviceNames[1],
+        write_list: writeList,
+      },
+    };
+
+    try {
+      await set(writeRef, payload2); // Updates same path
+      console.log(`✅ Second write: ${deviceNames[1]}`, payload2);
+    } catch (err) {
+      console.error(`❌ Error writing to ${deviceNames[1]}`, err);
+    }
+  }, 5000); // 5 seconds delay
+};
  
    return (
      <div className="MainCon">
-       <h2>Machine With Chiller(60L)</h2>
+       <h3>Machine With Chiller(60L)</h3>
  
        {machineKeys.length === 0 ? (
          <p>Loading machines...</p>
@@ -162,7 +180,7 @@ export const Iot_chiller_pcl = () => {
  
            return (
              <div key={machine} className='writ1'>
-               <h3>{machine}</h3>
+               <h2>{machine}</h2>
  
                {records.length === 0 ? (
                  <p>No records</p>
@@ -190,7 +208,7 @@ export const Iot_chiller_pcl = () => {
                )}
  
                {writeList.map((item, i) => (
-                 <div key={i}>
+                 <div key={i} className='write-item'>
                    <strong>{fieldNames[i] || `Control ${i + 1}`}:</strong>{" "}
                    <select
                      value={item.data}
