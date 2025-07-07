@@ -1,3 +1,5 @@
+// new stucter form read data machinewith chiller
+
 import React, { useEffect, useState } from 'react';
 import { getDatabase, ref, onValue, set } from 'firebase/database';
 
@@ -23,16 +25,24 @@ export const Iot_chiller = () => {
   ];
 
   // Fetch all machine keys
-  useEffect(() => {
-    const rootRef = ref(database);
-    onValue(rootRef, (snapshot) => {
-      const rootData = snapshot.val();
-      if (rootData) {
-        const keys = Object.keys(rootData).filter((key) => key.startsWith("SAFC_M"));
-        setMachineKeys(keys);
-      }
-    });
-  }, []);
+useEffect(() => {
+  const allowedMachineNumbers = [6]; // 👈 You provide this array
+
+  const rootRef = ref(database);
+  onValue(rootRef, (snapshot) => {
+    const rootData = snapshot.val();
+    if (rootData) {
+      const keys = Object.keys(rootData).filter((key) => {
+        if (!key.startsWith("SAFC_M")) return false;
+
+        const num = parseInt(key.replace("SAFC_M", "").trim());
+        return allowedMachineNumbers.includes(num);
+      });
+
+      setMachineKeys(keys);
+    }
+  });
+}, []);
 
   // Fetch read data for all machines
   useEffect(() => {
@@ -143,7 +153,7 @@ export const Iot_chiller = () => {
 
   return (
     <div className="MainCon">
-      <h2>Machine With Chiller</h2>
+      {/* <h2>Machine With Chiller</h2> */}
 
       {machineKeys.length === 0 ? (
         <p>Loading machines...</p>
