@@ -220,7 +220,8 @@ useEffect(() => {
               ))}
 
               <button
-                onClick={() => handleWrite(machine)}
+               onClick={() => handleWrite(machine)}
+               disabled={!allMachineData[machine]?.writeList}  
                 style={{
                   marginTop: "10px",
                   marginBottom: "30px",

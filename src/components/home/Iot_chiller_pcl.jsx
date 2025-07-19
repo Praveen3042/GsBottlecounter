@@ -185,7 +185,7 @@ export const Iot_chiller_pcl = () => {
               })}
 
               <button
-                onClick={() => handleWrite(machine, writeList)}
+                onClick={() => handleWrite(machine, allMachineData[machine]?.writeList || defaultWriteList)}
                 style={{
                   marginTop: "10px",
                   marginBottom: "30px",
