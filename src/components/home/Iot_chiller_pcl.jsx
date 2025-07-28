@@ -19,7 +19,7 @@ export const Iot_chiller_pcl = () => {
   
   // ✅ Fetch machine keys
   useEffect(() => {
-    const allowedMachineNumbers = [5];
+    const allowedMachineNumbers = [5,7];
     const rootRef = ref(database);
     onValue(rootRef, (snapshot) => {
       const rootData = snapshot.val();
