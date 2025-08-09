@@ -10,7 +10,7 @@ import { app } from "../../firebase/firebase";
 
 const database = getDatabase(app);
 console.log(database)
-export const Iotchiller = () => {
+export const Iotchiller1 = () => {
   const [machineKeys, setMachineKeys] = useState([]);
   const [allMachineData, setAllMachineData] = useState({});
   const fieldNames = ["Counter Reset", "Pulse", "Stop PLC"];
@@ -25,8 +25,8 @@ export const Iotchiller = () => {
   ];
 
   // Fetch all machine keys
- useEffect(() => {
-  const allowedMachineNumbers = [3,4]; // 👈 You provide this array
+useEffect(() => {
+  const allowedMachineNumbers = [9]; // 👈 You provide this array
 
   const rootRef = ref(database);
   onValue(rootRef, (snapshot) => {
@@ -46,15 +46,39 @@ export const Iotchiller = () => {
 
 
   // Fetch read data for all machines
-  useEffect(() => {
-  machineKeys.forEach((machine) => {
-    // READ data
-    const readRef = ref(database, `/${machine}/read`);
-   
-    onValue(readRef, (snapshot) => {
-      const raw = snapshot.val();
-      const records = raw
-        ? Object.values(raw).map(({ ts, values }) => ({
+ useEffect(() => {
+     machineKeys.forEach((machine) => {
+       // READ data
+       const readRef = ref(database, `/${machine}/read`);
+        console.log("m9",readRef)
+       onValue(readRef, (snapshot) => {
+         const raw = snapshot.val();
+         // console.log(`Raw data from ${machine} read:`, raw);
+ 
+         if (!raw) {
+           console.error(`No data found for machine ${machine} at /${machine}/read`);
+           return;
+         }
+ 
+         // Extract device key and data
+         const deviceKey = Object.keys(raw || {})[0];
+         console.log(`Device key for machine ${machine}:`, deviceKey);
+ 
+         if (!deviceKey) {
+           console.error(`No device key found in data for machine ${machine}`);
+           return;
+         }
+ 
+         const deviceData = raw[deviceKey];
+         console.log(`Device data for machine ${machine}:`, deviceData);
+ 
+         if (!Array.isArray(deviceData)) {
+           console.warn(`Device data for ${machine} is not an array. Found:`, deviceData);
+           return;
+         }
+ 
+         // Map the array to extract relevant fields
+         const records = deviceData.map(({ ts, values }) => ({
             ts,
             bottle_count: values?.bottle_count,
             plc_status: values?.plc_status,
@@ -64,34 +88,36 @@ export const Iotchiller = () => {
             comp : values?.comp,
             fsw_trip: values?.fsw_trip,
             kp1_trip: values?.kp1_trip,
-          }))
-        : [];
-
-      setAllMachineData((prev) => ({
-        ...prev,
-        [machine]: {
-          ...(prev[machine] || {}),
-          records,
-        },
-      }));
-    });
-
-    // WRITE data
-    const writeRef = ref(database, `/${machine}/write`);
-    onValue(writeRef, (snapshot) => {
-      const writeData = snapshot.val();
-      const writeList = writeData?.params?.write_list;
-
-      setAllMachineData((prev) => ({
-        ...prev,
-        [machine]: {
-          ...(prev[machine] || {}),
-          writeList: writeList || defaultWriteList,
-        },
-      }));
-    });
-  });
-}, [machineKeys]);
+         }));
+         console.log("m9 r",records)
+ 
+         // Update state with records
+         setAllMachineData((prev) => ({
+           ...prev,
+           [machine]: {
+             ...(prev[machine] || {}),
+             records,
+           },
+         }));
+       });
+ 
+       // WRITE data
+       const writeRef = ref(database, `/${machine}/write`);
+       onValue(writeRef, (snapshot) => {
+         const writeData = snapshot.val();
+         console.log(`Write data for machine ${machine}:`, writeData);
+ 
+         const writeList = writeData?.params?.write_list || [];
+         setAllMachineData((prev) => ({
+           ...prev,
+           [machine]: {
+             ...(prev[machine] || {}),
+             writeList,
+           },
+         }));
+       });
+     });
+   }, [machineKeys]);
 
 
   // Handle write change
@@ -112,21 +138,21 @@ export const Iotchiller = () => {
 
   // Handle writing data to each machine
   const handleWrite = async (machine) => {
-    const payload = {
-      method: "do_mb_write",
-      params: {
-        device_name: "plc_device",
-        write_list: allMachineData[machine].writeList,
-      },
+      const payload = {
+        method: "do_mb_write",
+        params: {
+          device_name: "plc_device",
+          write_list: allMachineData[machine].writeList,
+        },
+      };
+      const writeRef = ref(database, `/${machine}/write`);
+      try {
+        await set(writeRef, payload);
+        console.log(`Write to ${machine}:`, payload);
+      } catch (err) {
+        console.error(`Write error for ${machine}:`, err);
+      }
     };
-    const writeRef = ref(database, `/${machine}/write`);
-    try {
-      await set(writeRef, payload);
-      console.log(`Write to ${machine}:`, payload);
-    } catch (err) {
-      console.error(`Write error for ${machine}:`, err);
-    }
-  };
 
   return (
     <div className="MainCon">

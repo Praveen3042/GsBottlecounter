@@ -5,6 +5,7 @@ import { GSBottle_counter } from './GSBottle_counter.jsx'
 import { Iotchiller } from './Iotchiller.jsx'
 import {Iot_chiller} from './Iot_chiller.jsx'
 import { Iot_chiller_pcl } from './Iot_chiller_pcl.jsx'
+import { Iotchiller1 } from './Iotchiller1.jsx'
 
 
 const Home = () => {
@@ -16,11 +17,9 @@ const Home = () => {
             <Iot/>    {/* firat m */}
             <GSBottle_counter/>  {/* 2nd m2 resd */}
             <Iotchiller/>  {/* firat m */}
-            <Iot_chiller/>
-            <Iot_chiller_pcl/> 
-            
-         
-            
+            <Iotchiller1/>  {/* 200l */}
+            <Iot_chiller/>  {/* 300l */}
+            <Iot_chiller_pcl/>   {/* 60l */}
         </div>
     )
 }
