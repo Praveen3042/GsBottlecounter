@@ -27,7 +27,7 @@ export const Iot_chiller = () => {
 
   // Fetch all machine keys
 useEffect(() => {
-  const allowedMachineNumbers = [6,10]; // 👈 You provide this array
+  const allowedMachineNumbers = [6,10,11]; // 👈 You provide this array
 
   const rootRef = ref(database);
   onValue(rootRef, (snapshot) => {
