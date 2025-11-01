@@ -29,6 +29,8 @@ export const Iot_chiller = () => {
   const machineNames = {
     6: "-RAIPUR",
     10: "-GUNTUR",
+    11:"NELLORE",
+    12:"SANGLI"
    
   };
   // Fetch all machine keys
