@@ -127,7 +127,7 @@ export const GSBottle_counter = () => {
 
           return (
             <div key={machine} className='writ1'>
-              <h2>{machine}</h2>
+              <h2>{machine} -HYD WEST</h2>
 
               {records.length === 0 ? (
                 <p>No records</p>

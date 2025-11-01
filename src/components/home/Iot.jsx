@@ -140,13 +140,13 @@ export const Iot = () => {
 
 
             <div>
-
+                
 
 
 
                 <div className="writ1">
                     {/* reading part */}
-
+                     <h2>machine 1 - CHITRADURGA</h2>
                     {records.length === 0 ? (
                         <p>No records found</p>
                     ) : (

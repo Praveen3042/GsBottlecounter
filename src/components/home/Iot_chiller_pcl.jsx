@@ -16,10 +16,15 @@ export const Iot_chiller_pcl = () => {
   const [machineKeys, setMachineKeys] = useState([]);
   const [allMachineData, setAllMachineData] = useState({});
   const fieldNames = ["Counter Reset", "Pulse", "Stop PLC"];
-  
+  const allowedMachineNumbers = [5,7];
+  const machineNames = {
+    5: "-DODABALLAPUR",
+    7: "-CHECKBALLAPUR",
+   
+  };
   // ✅ Fetch machine keys
   useEffect(() => {
-    const allowedMachineNumbers = [5,7];
+    
     const rootRef = ref(database);
     onValue(rootRef, (snapshot) => {
       const rootData = snapshot.val();
@@ -142,9 +147,12 @@ export const Iot_chiller_pcl = () => {
           const records = machineData.records || [];
           const writeList = machineData.writeList || defaultWriteList;
 
+           const machineNumber = parseInt(machine.replace("SAFC_M", "").trim());
+           const machineName = machineNames[machineNumber] || "Unnamed Machine";
+
           return (
             <div key={machine} className='writ1'>
-              <h2>{machine}</h2>
+             <h2>{machine}  {machineName}</h2>
 
               {records.length === 0 ? (
                 <p>No records</p>

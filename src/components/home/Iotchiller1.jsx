@@ -15,7 +15,12 @@ export const Iotchiller1 = () => {
   const [allMachineData, setAllMachineData] = useState({});
   const fieldNames = ["Counter Reset", "Pulse", "Stop PLC"];
 
-  
+
+  const machineNames = {
+    9: "-BELGUM",
+   
+  };
+  const allowedMachineNumbers = [9]; // 👈 You provide this array
 
   // Default write list structure
   const defaultWriteList = [
@@ -23,10 +28,10 @@ export const Iotchiller1 = () => {
     { data: "1", data_type: 0, request_type: 5, starting_reg_addr: 520 },
     { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 525 },
   ];
-
+  
   // Fetch all machine keys
 useEffect(() => {
-  const allowedMachineNumbers = [9]; // 👈 You provide this array
+  
 
   const rootRef = ref(database);
   onValue(rootRef, (snapshot) => {
@@ -166,9 +171,12 @@ useEffect(() => {
           const records = machineData.records || [];
           const writeList = machineData.writeList || defaultWriteList;
 
+           const machineNumber = parseInt(machine.replace("SAFC_M", "").trim());
+          const machineName = machineNames[machineNumber] || "Unnamed Machine";
+
           return (
             <div key={machine} className='writ1'>
-              <h2>{machine}</h2>
+              <h2>{machine}  {machineName}</h2>
 
               {records.length === 0 ? (
                 <p>No records</p>
@@ -242,3 +250,6 @@ useEffect(() => {
     </div>
   );
 };
+
+
+
