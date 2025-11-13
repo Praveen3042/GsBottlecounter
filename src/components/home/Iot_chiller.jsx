@@ -24,13 +24,14 @@ export const Iot_chiller = () => {
     { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 525 },
     { data: "0", data_type: 0, request_type: 5, starting_reg_addr: 539 },
   ];
- const allowedMachineNumbers = [6,10,11,12]; // 👈 You provide this array
+ const allowedMachineNumbers = [6,10,11,12,13]; // 👈 You provide this array
  
   const machineNames = {
     6: "-RAIPUR",
     10: "-GUNTUR",
     11:"NELLORE",
-    12:"SANGLI"
+    12:"SANGLI",
+    13:"NAGPUR-2",
    
   };
   // Fetch all machine keys
